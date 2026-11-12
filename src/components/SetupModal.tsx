@@ -5,7 +5,7 @@ import { buildFirmware, FIRMWARE_FILE, missingFields } from '../utils/firmware';
 export const SetupModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
   const [ssid, setSsid] = useState('');
   const [wifiPassword, setWifiPassword] = useState('');
-  const [deviceEmail, setDeviceEmail] = useState('');
+  const [deviceEmail, setDeviceEmail] = useState('meter01@energymeter.app');
   const [devicePassword, setDevicePassword] = useState('');
   const [msg, setMsg] = useState('');
   if (!open) return null;
@@ -30,8 +30,8 @@ export const SetupModal: React.FC<{ open: boolean; onClose: () => void }> = ({ o
           <button onClick={onClose} className="min-h-11 px-3 font-bold" aria-label="Close">Close</button>
         </div>
         <ol className="text-sm list-decimal pl-5 space-y-1 mb-3">
-          <li>In the Firebase console, turn on Email/Password sign-in, then create two users: one for you and one for the meter.</li>
-          <li>Put both user IDs (UIDs) into <code>firestore.rules</code> and publish the rules.</li>
+          <li>In the Firebase console, turn on Email/Password sign-in, then create the meter's user (email <code>meter01@energymeter.app</code> with a password you choose).</li>
+          <li>Publish <code>firestore.rules</code> in the Rules tab. It already expects that meter email.</li>
           <li>Enter the Wi-Fi and the meter user's login below and download the sketch.</li>
           <li>Put the file in a folder named <code>esp32_energy_meter</code>, open it in Arduino IDE, choose board "ESP32 Dev Module" and upload.</li>
         </ol>

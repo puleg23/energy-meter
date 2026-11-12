@@ -5,6 +5,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      HAS_DEPLOY_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -14,7 +16,8 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - if: env.HAS_DEPLOY_KEY == 'true'   # skipped when you host with App Hosting instead
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           projectId: studio-188898866-4fae9

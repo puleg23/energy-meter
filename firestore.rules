@@ -1,15 +1,18 @@
 rules_version = '2';
 
-// Replace the two UIDs before publishing (Firebase console > Authentication > Users > "User UID").
-//   OWNER_UID  = the person who uses the app
-//   DEVICE_UID = the account the ESP32 signs in with
+// Who may do what:
+//   DEVICE: the Firebase user the ESP32 signs in with (DEVICE_EMAIL below, same as in the firmware).
+//   OWNER : the person using the app. Leave OWNER_EMAIL empty to allow any signed-in user except the
+//           meter (fine for a private prototype). Put your own email there to lock it to you.
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function signedIn() { return request.auth != null; }
-    function isOwner()  { return signedIn() && request.auth.uid == 'OWNER_UID'; }
-    function isDevice() { return signedIn() && request.auth.uid == 'DEVICE_UID'; }
-    function either()   { return isOwner() || isDevice(); }
+    function signedIn()    { return request.auth != null && request.auth.token.email != null; }
+    function email()       { return request.auth.token.email.lower(); }
+    function isDevice()    { return signedIn() && email() == 'meter01@energymeter.app'; }   // DEVICE_EMAIL
+    function ownerEmail()  { return ''; }   // '' = any signed-in user except the meter. Or your own email, lower case, to lock it to you.
+    function isOwner()     { return signedIn() && !isDevice() && (ownerEmail() == '' || email() == ownerEmail()); }
+    function either()      { return isOwner() || isDevice(); }
 
     // Live readings: only the meter writes, both read.
     match /devices/{id} {

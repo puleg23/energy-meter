@@ -1,0 +1,8 @@
+# Firebase App Hosting: builds with "npm run build", serves ./dist with "npm run start" (server.js).
+# The Firebase web config is bundled from firebase-applet-config.json, so no environment variables are needed.
+runConfig:
+  minInstances: 0
+  maxInstances: 1
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512

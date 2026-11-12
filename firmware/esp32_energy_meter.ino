@@ -861,6 +861,7 @@ void pushPending() {
 void netTask(void*) {
   uint32_t lastTele = 0, lastCmd = 0, lastSet = 0, lastHist = 0, lastWifiTry = 0;
   bool ntpStarted = false;
+  uint8_t authFails = 0;                       // sign-in failures in a row (used to back off)
   for (;;) {
     uint32_t now = millis();
     if (WiFi.status() != WL_CONNECTED) {
@@ -870,7 +871,18 @@ void netTask(void*) {
       continue;
     }
     if (!ntpStarted) { configTime(TZ_OFFSET_SEC, 0, "pool.ntp.org", "time.google.com"); ntpStarted = true; }
-    if (!ensureAuth()) { cloudOk = false; vTaskDelay(pdMS_TO_TICKS(5000)); continue; }
+    if (!ensureAuth()) {
+      // Keep retrying, but slower each time (5 s, 10 s, 20 s ... up to 10 min). Hammering a wrong login
+      // makes Firebase block this network with TOO_MANY_ATTEMPTS_TRY_LATER. Protection is not affected.
+      cloudOk = false;
+      uint32_t wait = 5000UL << (authFails < 7 ? authFails : 7);
+      if (wait > 600000UL) wait = 600000UL;
+      if (authFails < 255) authFails++;
+      Serial.printf("Sign-in failed %u time(s); next try in %lu s\n", authFails, (unsigned long)(wait / 1000));
+      vTaskDelay(pdMS_TO_TICKS(wait));
+      continue;
+    }
+    authFails = 0;
 
     if (now - lastCmd >= COMMAND_MS)   { lastCmd = now;  pollCommand(); }
     if (now - lastSet >= SETTINGS_MS)  { lastSet = now;  pollSettings(); }
