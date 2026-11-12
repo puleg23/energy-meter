@@ -1,0 +1,6 @@
+{
+  "name": "Energy Meter & Cost Monitor (ZMW)",
+  "description": "Live digital energy meter, tariff calculator, production batch tracker, and trip protection controller for ZMW (Zambian Kwacha).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

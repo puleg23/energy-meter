@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #f4f5f7;
+    color: #111111;
+    font-family: Arial, Helvetica, system-ui, sans-serif;
+  }
+  .font-mono-nums { font-variant-numeric: tabular-nums; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: 0.5; }
+}

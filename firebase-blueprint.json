@@ -1,0 +1,44 @@
+{
+  "entities": {
+    "DeviceTelemetry": {
+      "title": "DeviceTelemetry",
+      "description": "Live electrical telemetry uploaded by ESP32 micro-controller",
+      "type": "object",
+      "properties": {
+        "voltage": { "type": "number" },
+        "current": { "type": "number" },
+        "power": { "type": "number" },
+        "energy": { "type": "number" },
+        "pf": { "type": "number" },
+        "relay_state": { "type": "string", "enum": ["ON", "OFF"] },
+        "pzem_connected": { "type": "boolean" },
+        "batch_active": { "type": "boolean" },
+        "batch_name": { "type": "string" },
+        "batch_time_left": { "type": "number" },
+        "batch_kwh_used": { "type": "number" }
+      },
+      "required": ["voltage", "current", "power", "energy", "pf", "relay_state"]
+    },
+    "DeviceCommand": {
+      "title": "DeviceCommand",
+      "description": "Control commands sent from React Web App to ESP32 board",
+      "type": "object",
+      "properties": {
+        "command": { "type": "string" },
+        "relay_state": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["command"]
+    }
+  },
+  "firestore": {
+    "/devices/{deviceId}": {
+      "schema": "DeviceTelemetry",
+      "description": "ESP32 live telemetry document"
+    },
+    "/commands/{deviceId}": {
+      "schema": "DeviceCommand",
+      "description": "ESP32 command queue document"
+    }
+  }
+}

@@ -1,0 +1,56 @@
+rules_version = '2';
+
+// Replace the two UIDs before publishing (Firebase console > Authentication > Users > "User UID").
+//   OWNER_UID  = the person who uses the app
+//   DEVICE_UID = the account the ESP32 signs in with
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isOwner()  { return signedIn() && request.auth.uid == 'OWNER_UID'; }
+    function isDevice() { return signedIn() && request.auth.uid == 'DEVICE_UID'; }
+    function either()   { return isOwner() || isDevice(); }
+
+    // Live readings: only the meter writes, both read.
+    match /devices/{id} {
+      allow read: if either();
+      allow create, update: if isDevice() && id == 'ESP32_METER_01';
+    }
+
+    // Commands: only the app writes, both read. Whitelisted command names.
+    match /commands/{id} {
+      allow read: if either();
+      allow create, update: if isOwner() && id == 'ESP32_METER_01'
+        && request.resource.data.command in ['SET_RELAY', 'START_BATCH', 'STOP_BATCH', 'EXTEND_BATCH', 'RESET_TRIP', 'ACK_BATCH', 'NONE'];
+    }
+
+    // Limits, tariff and mute: only the app writes. Limits must stay in the ranges the firmware accepts.
+    match /settings/{id} {
+      allow read: if either();
+      allow create, update: if isOwner() && id == 'ESP32_METER_01'
+        && request.resource.data.get('over_voltage', 250) is number
+        && request.resource.data.get('over_voltage', 250) >= 200 && request.resource.data.get('over_voltage', 250) <= 300
+        && request.resource.data.get('under_voltage', 180) is number
+        && request.resource.data.get('under_voltage', 180) >= 80 && request.resource.data.get('under_voltage', 180) <= 230
+        && request.resource.data.get('over_current', 15) is number
+        && request.resource.data.get('over_current', 15) >= 1 && request.resource.data.get('over_current', 15) <= 60
+        && request.resource.data.get('rate_per_kwh', 1) is number
+        && request.resource.data.get('rate_per_kwh', 1) >= 0 && request.resource.data.get('rate_per_kwh', 1) < 1000;
+    }
+
+    // Daily history and finished batches: only the meter writes.
+    match /history_daily/{day} {
+      allow read: if either();
+      allow create, update: if isDevice();
+    }
+    match /batches/{id} {
+      allow read: if either();
+      allow create, update: if isDevice();
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
