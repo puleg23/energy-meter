@@ -130,6 +130,7 @@ struct NewSettings { bool valid; float ov, uv, oc; bool muted; };
 
 struct BatchRecord { char name[24]; uint32_t startedAt; uint16_t plannedMin; uint32_t actualS; float kwh; char reason[14]; };
 struct DayRecord { bool valid; int key; float kwh; float hour[24]; };
+struct Btn { int pin; bool last; uint32_t changed, pressedAt; bool longDone; };   // declared up here so the Arduino auto-prototypes can see it
 
 SemaphoreHandle_t mtx;
 Snapshot shared;                     // protected by mtx
@@ -534,7 +535,6 @@ void handlePending() {
 // ============================================================
 //  Buttons
 // ============================================================
-struct Btn { int pin; bool last; uint32_t changed, pressedAt; bool longDone; };
 Btn btnBatch = {PIN_BTN_BATCH, HIGH, 0, 0, false};
 Btn btnRelay = {PIN_BTN_RELAY, HIGH, 0, 0, false};
 
