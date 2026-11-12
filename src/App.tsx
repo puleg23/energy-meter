@@ -7,7 +7,8 @@ import { CostView } from './components/views/CostView';
 import { BatchView } from './components/views/BatchView';
 import { LimitsView } from './components/views/LimitsView';
 import { GraphsView } from './components/views/GraphsView';
-import { Navigation } from './components/Navigation';
+import { Navigation, Sidebar } from './components/Navigation';
+import { Brand } from './components/Logo';
 import { SetupModal } from './components/SetupModal';
 import { Login } from './components/Login';
 import { ActiveTab } from './types';
@@ -31,18 +32,22 @@ function Signed({ user }: { user: User }) {
   const go = (t: ActiveTab) => { setTab(t); window.location.hash = t; };
 
   return (
-    <>
-      <main className="flex-1">
+    <div className="lg:flex lg:min-h-screen">
+      <Sidebar currentTab={tab} onTabChange={go} brand={<Brand size={38} />} online={m.online} email={user.email}
+        onSignOut={() => signOut(auth)} onSetup={() => setSetupOpen(true)} />
+      <main className="flex-1 w-full max-w-md mx-auto px-4 sm:px-5 lg:max-w-none lg:mx-0 lg:ml-64 lg:px-10 xl:px-14">
+        <div className="lg:max-w-6xl lg:mx-auto">
         {tab === 'home' && <HomeView m={m} onOpenSetup={() => setSetupOpen(true)} />}
         {tab === 'cost' && <CostView m={m} />}
         {tab === 'batch' && <BatchView m={m} />}
         {tab === 'limits' && <LimitsView m={m} />}
         {tab === 'graphs' && <GraphsView m={m} />}
-        <button onClick={() => signOut(auth)} className="text-xs text-[#555555] underline min-h-11 mt-2 mb-20">Sign out ({user.email})</button>
+        <button onClick={() => signOut(auth)} className="lg:hidden text-xs text-[#555555] underline min-h-11 mt-2 mb-20">Sign out ({user.email})</button>
+        </div>
       </main>
       <SetupModal open={setupOpen} onClose={() => setSetupOpen(false)} />
       <Navigation currentTab={tab} onTabChange={go} />
-    </>
+    </div>
   );
 }
 
@@ -51,10 +56,8 @@ export default function App() {
   useEffect(() => onAuthStateChanged(auth, setUser), []);
 
   return (
-    <div className="min-h-screen bg-[#f4f5f7] flex justify-center">
-      <div className="w-full max-w-md min-h-screen flex flex-col px-4 sm:px-5">
-        {user === undefined ? <p className="pt-20 text-center text-[#555555]">Loading...</p> : user ? <Signed user={user} /> : <Login />}
-      </div>
+    <div className="min-h-screen bg-[#f4f5f7]">
+      {user === undefined ? <p className="pt-20 text-center text-[#555555] w-full">Loading...</p> : user ? <Signed user={user} /> : <Login />}
     </div>
   );
 }

@@ -40,8 +40,8 @@ export const HomeView: React.FC<{ m: Meter; onOpenSetup: () => void }> = ({ m, o
       {stale && t && <Banner tone="warn">The meter has not reported for over 20 s. Readings below are hidden because they may be out of date.</Banner>}
       {live && lastResult && <Banner tone="warn">Last command: {lastResult}</Banner>}
 
-      <Card title="Live readings">
-        <div className="grid grid-cols-2 gap-2">
+      <Card title="Live readings" span="two">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-4">
           <Reading label="Voltage" value={show(t?.voltage, 1)} unit="V" warn={!stale && vBad} />
           <Reading label="Current" value={show(t?.current, 2)} unit="A" warn={!stale && iBad} />
           <Reading label="Power" value={show(t?.power, 1)} unit="W" />
@@ -93,7 +93,7 @@ export const HomeView: React.FC<{ m: Meter; onOpenSetup: () => void }> = ({ m, o
           </ul>
         )}
       </Card>
-      <button onClick={onOpenSetup} className="text-sm text-[#1a5fb4] underline self-start min-h-11">ESP32 setup</button>
+      <button onClick={onOpenSetup} className="lg:hidden text-sm text-[#1a5fb4] underline self-start min-h-11">ESP32 setup</button>
     </Page>
   );
 };

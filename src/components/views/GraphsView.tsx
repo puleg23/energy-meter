@@ -37,7 +37,7 @@ export const GraphsView: React.FC<{ m: Meter }> = ({ m }) => {
   return (
     <Page title="Graphs">
       {m.error && <Banner tone="bad">{m.error}</Banner>}
-      <Card title="Power by hour (W)" right={
+      <Card title="Power by hour (W)" span="two" right={
         <div className="flex border border-[#999999] rounded overflow-hidden text-sm">
           {(['today', 'yesterday'] as const).map((d) => (
             <button key={d} onClick={() => setDay(d)} aria-label={d === 'today' ? 'Today' : 'Yesterday'} className={`min-h-9 px-2.5 text-[13px] ${day === d ? 'bg-[#1a5fb4] text-white font-bold' : 'bg-white'}`}>{d === 'today' ? 'Today' : 'Yest.'}</button>

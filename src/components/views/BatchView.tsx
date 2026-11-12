@@ -82,7 +82,7 @@ export const BatchView: React.FC<{ m: Meter }> = ({ m }) => {
         </Card>
       )}
 
-      <Card title="Batch history">
+      <Card title="Batch history" span="full">
         {m.batches.length === 0 ? (
           <p className="text-sm text-[#555555]">No finished batches yet.</p>
         ) : (

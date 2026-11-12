@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import { Btn, Card, Field, inputCls } from './ui';
+import { LogoMark } from './Logo';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -30,17 +31,23 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="pt-16">
-      <h1 className="text-xl font-bold mb-3">Smart Energy Meter</h1>
-      <Card title={creating ? 'Create account' : 'Sign in'}>
-        <form onSubmit={submit} className="flex flex-col gap-3">
-          <Field label="Email"><input className={inputCls} type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required /></Field>
-          <Field label="Password"><input className={inputCls} type="password" autoComplete={creating ? 'new-password' : 'current-password'} value={password} onChange={(e) => setPassword(e.target.value)} required /></Field>
-          {err && <p className="text-sm text-[#b3261e]" role="alert">{err}</p>}
-          <Btn kind="primary" type="submit" disabled={busy}>{busy ? 'Please wait...' : creating ? 'Create account' : 'Sign in'}</Btn>
-          <button type="button" className="text-sm underline min-h-11" onClick={() => { setCreating(!creating); setErr(''); }}>{creating ? 'Have an account? Sign in' : 'New here? Create an account'}</button>
-        </form>
-      </Card>
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-10">
+      <div className="w-full max-w-sm lg:max-w-md">
+        <div className="flex flex-col items-center text-center mb-6">
+          <LogoMark size={84} className="shadow-sm rounded-[20px]" />
+          <h1 className="mt-3 text-3xl font-extrabold tracking-tight">EHC <span className="text-[#1a5fb4]">Meter</span></h1>
+          <p className="text-sm text-[#555555] mt-1">Live energy, cost and protection</p>
+        </div>
+        <Card title={creating ? 'Create account' : 'Sign in'} className="lg:shadow-sm">
+          <form onSubmit={submit} className="flex flex-col gap-3">
+            <Field label="Email"><input className={inputCls} type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required /></Field>
+            <Field label="Password"><input className={inputCls} type="password" autoComplete={creating ? 'new-password' : 'current-password'} value={password} onChange={(e) => setPassword(e.target.value)} required /></Field>
+            {err && <p className="text-sm text-[#b3261e]" role="alert">{err}</p>}
+            <Btn kind="primary" type="submit" disabled={busy}>{busy ? 'Please wait...' : creating ? 'Create account' : 'Sign in'}</Btn>
+            <button type="button" className="text-sm underline min-h-11" onClick={() => { setCreating(!creating); setErr(''); }}>{creating ? 'Have an account? Sign in' : 'New here? Create an account'}</button>
+          </form>
+        </Card>
+      </div>
     </div>
   );
 };

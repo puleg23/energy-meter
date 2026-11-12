@@ -1,7 +1,10 @@
 import React from 'react';
 
-export const Card: React.FC<{ title?: string; right?: React.ReactNode; children: React.ReactNode; className?: string }> = ({ title, right, children, className = '' }) => (
-  <section className={`bg-white border border-[#cccccc] rounded-lg p-3.5 ${className}`}>
+/** span: on laptops 'two' takes two columns, 'full' takes the whole row. Phones are always one column. */
+const SPAN = { one: '', two: 'lg:col-span-2', full: 'lg:col-span-2 xl:col-span-3' } as const;
+
+export const Card: React.FC<{ title?: string; right?: React.ReactNode; children: React.ReactNode; className?: string; span?: keyof typeof SPAN }> = ({ title, right, children, className = '', span = 'one' }) => (
+  <section className={`bg-white border border-[#cccccc] rounded-lg p-3.5 lg:p-5 ${SPAN[span]} ${className}`}>
     {(title || right) && (
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-base font-bold">{title}</h2>
@@ -24,7 +27,7 @@ export const Banner: React.FC<{ tone: 'bad' | 'warn' | 'ok' | 'info'; children: 
     : tone === 'warn' ? 'bg-[#fff4d6] border-[#b26a00] text-[#5c3800]'
     : tone === 'ok' ? 'bg-[#e6f2e7] border-[#2e7d32] text-[#1b4d1e]'
     : 'bg-[#e8f0fb] border-[#1a5fb4] text-[#10386b]';
-  return <div role="status" className={`border rounded-md px-3 py-2 text-sm ${c}`}>{children}</div>;
+  return <div role="status" className={`border rounded-md px-3 py-2 text-sm lg:col-span-2 xl:col-span-3 ${c}`}>{children}</div>;
 };
 
 export const Reading: React.FC<{ label: string; value: string; unit: string; warn?: boolean }> = ({ label, value, unit, warn }) => (
@@ -47,12 +50,12 @@ export const Field: React.FC<{ label: string; hint?: string; children: React.Rea
 export const inputCls = 'w-full min-h-12 px-3 border border-[#999999] rounded-md text-base bg-white';
 
 export const Page: React.FC<{ title: string; right?: React.ReactNode; children: React.ReactNode }> = ({ title, right, children }) => (
-  <div className="pb-24">
-    <header className="h-14 -mx-4 sm:-mx-5 px-4 sm:px-5 flex items-center justify-between bg-white border-b border-[#cccccc] mb-3">
-      <h1 className="text-lg font-bold">{title}</h1>
+  <div className="pb-24 lg:pb-10">
+    <header className="h-14 -mx-4 sm:-mx-5 px-4 sm:px-5 flex items-center justify-between bg-white border-b border-[#cccccc] mb-3 lg:mx-0 lg:px-0 lg:h-20 lg:bg-transparent lg:border-0 lg:mb-1">
+      <h1 className="text-lg font-bold lg:text-2xl">{title}</h1>
       {right}
     </header>
-    <div className="flex flex-col gap-3">{children}</div>
+    <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:gap-5 lg:items-start">{children}</div>
   </div>
 );
 
